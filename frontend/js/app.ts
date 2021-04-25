@@ -6,7 +6,7 @@ function loaddata() {
 
     $.ajax({
         type: "GET",
-        url: "../../backend/serviceHandler.php",
+        url: "../backend/serviceHandler.php",
         cache: false,
         data: {method: "queryAppointments"},
         dataType: "json",
