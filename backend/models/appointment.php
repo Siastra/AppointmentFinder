@@ -103,4 +103,8 @@ class Appointment {
         $this->title = $title;
     }
 
+    public function getArray() : array
+    {
+        return array($this->title, $this->info, $this->location, $this->duration, $this->timeslots);
+    }
 }
