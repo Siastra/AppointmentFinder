@@ -1,5 +1,6 @@
 <?php
 
+include_once "./models/appointment.php";
 
 class DB
 {
@@ -31,7 +32,7 @@ class DB
         }
     }
 
-    public function insertApppointment(array $params): bool
+    public function insertAppointment(array $params): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO `appointments` (`id`, `title`, `info`, `location`, `duration`) 
                                                  VALUES (NULL, ?, ?, ?, ?);");
@@ -42,4 +43,45 @@ class DB
             return false;
         }
     }
+
+    public function getAllAppointments() : array
+    {
+        $res = array();
+        $stmt = $this->conn->prepare('SELECT id, title, location, info, duration FROM appointments;');
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            // output data of each row
+            try {
+                $apps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($apps as $app) {
+                    $appointment = new Appointment($app["title"], $app["location"], $app["info"],
+                        $app["duration"], $this->getAllTimeslotsById($app["id"]));
+                    array_push($res, $appointment->getArray());
+                }
+            } catch (Exception $e) {
+                echo 'Exception abgefangen: ', $e->getMessage(), "\n";
+            }
+        }
+        return $res;
+    }
+
+    public function getAllTimeslotsById(int $id) : array
+    {
+        $timeslots = array();
+        $stmt = $this->conn->prepare('SELECT app_id, startTime FROM timeslots WHERE app_id = ?;');
+        $stmt->execute([$id]);
+        if ($stmt->rowCount() > 0) {
+            // output data of each row
+            try {
+                $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($slots as $slot) {
+                    array_push($timeslots, $slot);
+                }
+            } catch (Exception $e) {
+                echo 'Exception abgefangen: ', $e->getMessage(), "\n";
+            }
+        }
+        return $timeslots;
+    }
+
 }
