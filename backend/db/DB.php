@@ -34,10 +34,12 @@ class DB
 
     public function insertAppointment(array $params): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO `appointments` (`id`, `title`, `info`, `location`, `duration`) 
-                                                 VALUES (NULL, ?, ?, ?, ?);");
+        $stmt = $this->conn->prepare("INSERT INTO `appointments` (`id`, `title`, `info`, `location`, `duration`, 
+                                                                        `expiration_date`) 
+                                                 VALUES (NULL, ?, ?, ?, ?, ?);");
         try {
-            $stmt->execute([$params["title"], $params["info"], $params["location"], $params["duration"]]);
+            $stmt->execute([$params["title"], $params["info"], $params["location"], $params["duration"],
+                $params["expiration_date"]]);
         } catch (PDOException $e) {
             return false;
         }
@@ -73,7 +75,7 @@ class DB
     public function getAllAppointments() : array
     {
         $res = array();
-        $stmt = $this->conn->prepare('SELECT id, title, location, info, duration FROM appointments;');
+        $stmt = $this->conn->prepare('SELECT id, title, location, info, duration, expiration_date FROM appointments;');
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
             // output data of each row
@@ -81,7 +83,7 @@ class DB
                 $apps = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($apps as $app) {
                     $appointment = new Appointment($app["title"], $app["location"], $app["info"],
-                        $app["duration"], $this->getAllTimeslotsById($app["id"]));
+                        $app["duration"], $app["expiration_date"], $this->getAllTimeslotsById($app["id"]));
                     array_push($res, $appointment->getArray());
                 }
             } catch (Exception $e) {
