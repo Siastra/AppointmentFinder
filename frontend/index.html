@@ -16,7 +16,8 @@
     <title>Appointment-Finder</title>
 </head>
 <body>
-<section class="container">
+<div class="container">
+<section class="newAppoint">
     <h1>New Appointment</h1>
     <form id="insertAppointment">
         <div class="row">
@@ -67,5 +68,47 @@
         </tbody>
     </table>
 </section>
+        </form>
+    </section>
+    <section id="details" name="details">
+        <form id="voteSlots">
+            <div id="detailAppointment">
+                <!-- Timeslot Zeile -->
+                <div class="formate" id="Timeslots">
+
+                </div>
+                <!-- Namen eingeben&Button Zeile -->
+                <div id="userName" class="formate">
+                    <input type="text" id="name" placeholder="Ihr Name">
+                    <button form="voteSlots" type="submit">Absenden</button>
+                </div>
+                <div id="comments" class="formate">
+                    <label for="comment">Kommentare</label>
+                    <input type="text" id="comment">
+                    <div id="commentSection">
+
+                    </div>
+                </div>
+                <div id="timeVotes" class="formate">
+                    <label for="votes">Votes</label>
+                    <div id="votes" name="votes">
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="zuruckButton">
+            <button class="btn btn-primary mb-2" id="backButton">Zurück</button>
+        </div>
+
+    </section>
+    <section id="dashboard" name="dashboard">
+        <div id="appointments">
+            <button id="createNew" onclick="showForm()">Create new Appointment</button>
+
+        </div>
+    </section>
+</div>
+</div>
 </body>
 </html>
