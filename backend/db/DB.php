@@ -91,6 +91,14 @@ class DB
         return $res;
     }
 
+    public function get_AppId(array $param): array
+    {
+        $stmt = $this->conn->prepare('SELECT id  FROM appointments WHERE title = ?' );
+        $stmt->execute([$param["title"]]);
+        $id = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $id[0];
+    }
+
     public function getAllTimeslotsById(int $id) : array
     {
         $timeslots = array();
@@ -110,4 +118,16 @@ class DB
         return $timeslots;
     }
 
+
+    public function queryVoteChoice(array $params): bool
+    {
+        $stmt = $this->conn->prepare("INSERT INTO `choices` (`app_id`, `startTime`, `username`, `comment`) 
+                                                 VALUES (?, ?, ?, ?);");
+        try {
+            $stmt->execute(["20", $params["time"], $params["username"], $params["comment"]]);
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
