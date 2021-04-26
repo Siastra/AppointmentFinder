@@ -8,6 +8,7 @@ $(function () {
                 location: $("#location").val(),
                 info: $("#info").val(),
                 duration: $("#duration").val(),
+                expiration_date: $("#expiration_date").val(),
                 timeslots: timeslots
             };
             $.ajax({
@@ -44,6 +45,7 @@ function clearForm() {
     $("#location").val("");
     $("#info").val("");
     $("#duration").val("");
+    $("#expiration_date").val("");
     $("#timeslot").val("");
     $("#timeslotTable").html("");
 }

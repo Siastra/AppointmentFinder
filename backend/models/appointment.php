@@ -2,17 +2,18 @@
 
 class Appointment {
 
-    private string $title, $location, $info;
+    private string $title, $location, $info, $expiration_date;
     private int $duration;
     private array $timeslots;
 
-    public function __construct($title, $location, $info, $duration, $timeslots)
+    public function __construct($title, $location, $info, $duration, $expiration_date, $timeslots)
     {
         $this->title = $title;
         $this->location = $location;
         $this->info = $info;
         $this->duration = $duration;
         $this->timeslots = $timeslots;
+        $this->expiration_date = $expiration_date;
     }
 
     /**
@@ -101,6 +102,22 @@ class Appointment {
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpirationDate(): string
+    {
+        return $this->expiration_date;
+    }
+
+    /**
+     * @param string $expiration_date
+     */
+    public function setExpirationDate(string $expiration_date): void
+    {
+        $this->expiration_date = $expiration_date;
     }
 
     public function getArray() : array
