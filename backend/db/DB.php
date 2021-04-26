@@ -101,7 +101,7 @@ class DB
             try {
                 $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($slots as $slot) {
-                    array_push($timeslots, $slot);
+                    array_push($timeslots, $slot["startTime"]);
                 }
             } catch (Exception $e) {
                 echo 'Exception abgefangen: ', $e->getMessage(), "\n";
