@@ -16,35 +16,56 @@
     <title>Appointment-Finder</title>
 </head>
 <body>
-    <section class="container">
-        <h1>New Appointment</h1>
-        <form id="insertAppointment">
-            <div class="row">
-                <div class="form-group col-5">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" placeholder="Title" required>
-                </div>
-                <div class="form-group col-5">
-                    <label for="location">Location</label>
-                    <input type="text" class="form-control" id="location" placeholder="Location" required>
-                </div>
-                <div class="form-group col-2">
-                    <label for="duration">Duration</label>
-                    <input type="number" class="form-control" id="duration" placeholder="Duration" required
-                           min="0" max="1000">
-                </div>
+<section class="container">
+    <h1>New Appointment</h1>
+    <form id="insertAppointment">
+        <div class="row">
+            <div class="form-group col-5">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" placeholder="Title" required>
             </div>
-            <div class="form-row">
-                <div class="form-group col-auto">
-                    <label for="info">Info</label>
-                    <textarea class="form-control" id="info" placeholder="Info" required></textarea>
-                </div>
+            <div class="form-group col-5">
+                <label for="location">Location</label>
+                <input type="text" class="form-control" id="location" placeholder="Location" required>
             </div>
-            <hr>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary mb-2">Submit</button>
+            <div class="form-group col-2">
+                <label for="duration">Duration</label>
+                <input type="number" class="form-control" id="duration" placeholder="Duration" required
+                       min="0" max="1000">
             </div>
-        </form>
-    </section>
+        </div>
+        <div class="row">
+            <div class="form-group col-4">
+                <label for="info">Info</label>
+                <textarea class="form-control" id="info" placeholder="Info" required></textarea>
+            </div>
+        </div>
+        <hr>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </div>
+    </form>
+    <form id="timeslotForm">
+        <div class="row">
+            <div class="form-group col-4">
+                <label for="timeslot">Add Timeslot</label>
+                <input class="form-control" id="timeslot" type="datetime-local" required/>
+            </div>
+            <div class="col-4">
+                <br>
+                <button type="submit" class="btn btn-primary" id="addTimeslot">Add timeslot</button>
+            </div>
+        </div>
+    </form>
+    <table class="table table-responsive">
+        <thead>
+        <th>Date</th>
+        <th>Time</th>
+        </thead>
+        <tbody id="timeslotTable">
+
+        </tbody>
+    </table>
+</section>
 </body>
 </html>

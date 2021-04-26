@@ -38,9 +38,35 @@ class DB
                                                  VALUES (NULL, ?, ?, ?, ?);");
         try {
             $stmt->execute([$params["title"], $params["info"], $params["location"], $params["duration"]]);
-            return true;
         } catch (PDOException $e) {
             return false;
+        }
+        $id = $this->getLastAppointmentId();
+        $stmt2 = $this->conn->prepare("INSERT INTO `timeslots` (`app_id`, `startTime`) 
+                                                 VALUES (?, ?);");
+        foreach ($params["timeslots"] as $timeslot) {
+            try {
+                $stmt2->execute([$id, $timeslot]);
+            } catch (PDOException $e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getLastAppointmentId() : int
+    {
+        $stmt = $this->conn->prepare('SELECT max(id) as "lastId" FROM appointments;');
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            // output data of each row
+            try {
+                $app = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $app["lastId"];
+            } catch (Exception $e) {
+                echo 'Exception abgefangen: ', $e->getMessage(), "\n";
+                return 0;
+            }
         }
     }
 
