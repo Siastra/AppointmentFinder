@@ -1,8 +1,33 @@
 $(function() {
-    loaddata();
+    loadData();
+
+    $("#insertAppointment").submit(function (event) {
+        let formData = {
+            title: $("#title").val(),
+            location: $("#location").val(),
+            info: $("#info").val(),
+            duration: $("#duration").val()
+        };
+        $.ajax({
+            type: "GET",
+            url: "../backend/serviceHandler.php",
+            cache: false,
+            data: { method: "queryInsertAppointment", param: formData },
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+
+        event.preventDefault();
+    });
+
 });
 
-function loaddata() {
+function loadData() {
     $.ajax({
         type: "GET",
         url: "../backend/serviceHandler.php",

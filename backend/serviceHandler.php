@@ -2,12 +2,14 @@
 include("./businesslogic/simpleLogic.php");
 
 $method = "";
+$param = "";
 
 isset($_GET["method"]) ? $method = $_GET["method"] : false;
+isset($_GET["param"]) ? $param = $_GET["param"] : false;
 
 $logic = new SimpleLogic();
-$result = $logic->handleRequest($method);
-if ($result == null) {
+$result = $logic->handleRequest($method, $param);
+if ($result == []) {
     response("GET", 400, null);
 } else {
     response("GET", 200, $result);

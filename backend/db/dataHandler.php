@@ -1,9 +1,18 @@
 <?php
 include("./models/appointment.php");
+include("./db/DB.php");
 
 class DataHandler
 {
-    public function queryAppointments()
+
+    private DB $db;
+
+    public function __construct()
+    {
+        $this->db = new DB();
+    }
+
+    public function queryAppointments() : array
     {
         $ret = array();
         $apps = $this->getDemoData();
@@ -11,6 +20,12 @@ class DataHandler
             array_push($ret, $app->getArray());
         }
         return $ret;
+    }
+
+    public function queryInsertAppointment(array $params) : array
+    {
+        $this->db->insertApppointment($params);
+        return $this->queryAppointments();
     }
 
     private static function getDemoData(): array
@@ -28,4 +43,5 @@ class DataHandler
                     date("Y-m-d h:i:sa", mktime(10, 0, 0, 4, 28, 2021))])
         ];
     }
+
 }

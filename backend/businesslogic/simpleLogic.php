@@ -9,14 +9,17 @@ class SimpleLogic
         $this->dh = new DataHandler();
     }
 
-    function handleRequest($method): ?array
+    public function handleRequest($method, $param): array
     {
         switch ($method) {
             case "queryAppointments":
                 $res = $this->dh->queryAppointments();
                 break;
+            case "queryInsertAppointment":
+                $res = $this->dh->queryInsertAppointment($param);
+                break;
             default:
-                $res = null;
+                $res = [];
                 break;
         }
         return $res;
