@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2021 at 12:12 PM
+-- Generation Time: Apr 27, 2021 at 03:11 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 7.4.13
 
@@ -32,7 +32,8 @@ CREATE TABLE `appointments` (
   `title` varchar(64) NOT NULL,
   `info` varchar(128) NOT NULL,
   `location` varchar(64) NOT NULL,
-  `duration` int(11) NOT NULL
+  `duration` int(11) NOT NULL,
+  `expiration_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -89,7 +90,7 @@ ALTER TABLE `timeslots`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
