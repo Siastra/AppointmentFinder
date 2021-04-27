@@ -24,6 +24,9 @@ class SimpleLogic
             case "getId":
                 $res = $this->dh->get_AppId($param);
                 break;
+            case "getComment":
+                $res = $this->dh->getComments($param);
+                break;
             default:
                 $res = [];
                 break;

@@ -28,7 +28,9 @@ class DataHandler
         $this->db->insertAppointment($params);
         return $this->queryAppointments();
     }
-
+    public function getComments(array $params):array{
+        return $this->db->getCommentsbyId($params);
+    }
 
     private static function getDemoData(): array
     {
