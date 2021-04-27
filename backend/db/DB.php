@@ -120,13 +120,27 @@ class DB
         return $timeslots;
     }
 
+    public function getCommentsbyId(array $params): array{
+        $allComments = array();
+        $stmt = $this->conn->prepare('SELECT comment FROM choices WHERE app_id = ?;');
+        $stmt->execute([$params["appointmentId"]]);
+        if($stmt->rowCount()>0){
+            $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($comments as $comment) {
+                if($comment["comment"]!==""){
+                    array_push($allComments, $comment["comment"]);
 
+                }
+            }
+        }
+        return $allComments;
+    }
     public function queryVoteChoice(array $params): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO `choices` (`app_id`, `startTime`, `username`, `comment`) 
                                                  VALUES (?, ?, ?, ?);");
         try {
-            $stmt->execute(["20", $params["time"], $params["username"], $params["comment"]]);
+            $stmt->execute([$params["appointId"], $params["time"], $params["username"], $params["comment"]]);
             return true;
         } catch (PDOException $e) {
             return false;
