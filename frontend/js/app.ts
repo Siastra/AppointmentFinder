@@ -36,13 +36,14 @@ $(function () {
 
 
     $("#voteSlots").submit(function (event) {
+        let checkbox;
         for(let i=0;i<3;i++) {
-            let checkbox =document.getElementById("voted"+i);
+             checkbox =document.getElementById("voted"+i);
             // @ts-ignore
             if(checkbox.checked){
                 let votedTimeslots = {
                     // @ts-ignore
-                   //appointId: document.getElementById("slot").getAttribute("appointId"+i),
+                   appointId: document.getElementById("slot"+i).getAttribute("appointid"),
                     // @ts-ignore
                     time: document.getElementById("slot"+i).getAttribute("start"+i),
                     username: $("#name").val(),
@@ -170,7 +171,29 @@ function showForm() {
     // @ts-ignore
     y.style.display = "flex";
 }
+function fillCommentSection(id: number){
+    let allComments:Array<string>;
+    let  appointmentId= {
+        appointmentId: id
+    };
+    $.ajax({
+        'async': false,
 
+        type: "GET",
+        url: "../backend/serviceHandler.php",
+        cache: false,
+        data: {method: "getComment",param: appointmentId},
+        dataType: "json",
+        success: function (comments) {
+            console.log(comments);
+            allComments=comments;
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+    let commentSection=document.getElementById("commentSection");
+}
 function detailAppoint(appoint: string, id: number) {
     console.log(id);
     for (let i = 0; i < appoint.length; i++) {
@@ -183,6 +206,7 @@ function detailAppoint(appoint: string, id: number) {
         let voteButton = document.createElement("input");
         voteButton.type = "checkbox";
         voteButton.id = "voted" + i;
+        fillCommentSection(id);
         // @ts-ignore
         document.getElementById("Timeslots").appendChild(timeslots);
         // @ts-ignore
