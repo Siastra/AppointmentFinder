@@ -79,6 +79,18 @@ $(function () {
 
 });
 
+let sections:string[] = ['dashboard', 'newAppoint', 'details'];
+
+function switchSec(_section:string) {
+    for (const i in sections) {
+        if (sections[i] == _section) {
+            $('#' + _section).show();
+        }else {
+            $('#' + sections[i]).hide();
+        }
+    }
+}
+
 function clearForm() {
     $("#title").val("");
     $("#location").val("");
@@ -163,14 +175,6 @@ function dashboard(response: Array<string>) {
     }
 }
 
-function showForm() {
-    var x = document.getElementById("dashboard");
-    var y = document.getElementById("newAppoint");
-    // @ts-ignore
-    x.style.display = "none";
-    // @ts-ignore
-    y.style.display = "flex";
-}
 function fillCommentSection(id: number){
     let allComments:Array<string>;
     let  appointmentId= {
@@ -211,22 +215,6 @@ function detailAppoint(appoint: string, id: number) {
         document.getElementById("Timeslots").appendChild(timeslots);
         // @ts-ignore
         document.getElementById("Timeslots").appendChild(voteButton);
-    }
-
-    let backButton = document.getElementById("backButton");
-    // @ts-ignore
-    backButton.onclick = function () {
-        // @ts-ignore
-        document.getElementById("appointments").innerHTML = "";
-        var x = document.getElementById("dashboard");
-        var y = document.getElementById("details");
-        // @ts-ignore
-        x.style.display = "flex";
-        // @ts-ignore
-        y.style.display = "none";
-        loadData();
-
-
     }
 }
 
