@@ -226,6 +226,8 @@ function fillCommentSection(id: number) {
     });
     let commentSection = document.getElementById("commentSection");
     // @ts-ignore
+    commentSection.innerHTML="";
+    // @ts-ignore
     for (let i = 0; i <allComments.length ; i++) {
             let comment = document.createElement("p");
         // @ts-ignore
