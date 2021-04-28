@@ -248,24 +248,45 @@ function fillCommentSection(id: number) {
     }
 }
 function fillVotesSection(id:number){
+    let allVotes:Array<any>;
     let appointmentId = {
         appointmentId: id
     };
     $.ajax({
         'async': false,
-
         type: "GET",
         url: "../backend/serviceHandler.php",
         cache: false,
         data: {method: "getVotesById", param: appointmentId},
         dataType: "json",
         success: function (votes) {
-            console.log(votes);
+
+
+                allVotes=votes;
+
+
         },
         error: function (request, status, error) {
             console.log(request.responseText);
         }
     });
+    let voteSection = document.getElementById("voteSection");
+    // @ts-ignore
+    voteSection.innerHTML="";
+    // @ts-ignore
+    if(allVotes[0]=="No-Votes"){
+
+    }else{
+
+    // @ts-ignore
+        for (let i = 0; i < allVotes.length; i++) {
+        let vote = document.createElement("p");
+        // @ts-ignore
+        var voteToAdd = document.createTextNode("For the start Time:"+allVotes[i]["startTime"]+" are "+allVotes[i]["votes"]+" votes!");
+        vote.appendChild(voteToAdd);
+        // @ts-ignore
+        voteSection.appendChild(vote);
+    }}
 }
 function detailAppoint(appoint: string, id: number) {
     let appointId = {
