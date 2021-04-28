@@ -122,6 +122,6 @@ class Appointment {
 
     public function getArray() : array
     {
-        return array($this->title, $this->info, $this->location, $this->duration, $this->timeslots);
+        return array($this->title, $this->info, $this->location, $this->duration, $this->expiration_date, $this->timeslots);
     }
 }

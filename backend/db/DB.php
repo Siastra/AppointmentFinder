@@ -148,6 +148,23 @@ class DB
         $id = $stmt->fetch(PDO::FETCH_ASSOC);
         return $id;
     }
+
+    public function getVotesById(array $params): array{
+        $allVotes = array();
+        $stmt = $this->conn->prepare('SELECT startTime, count(*) as "votes" 
+                                              FROM `choices` 
+                                             WHERE app_id = ? 
+                                             GROUP BY startTime;');
+        $stmt->execute([$params["appointmentId"]]);
+        if($stmt->rowCount()>0){
+            $timeslots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($timeslots as $timeslot) {
+                array_push($allVotes, array("startTime" => $timeslot["startTime"], "votes" => $timeslot["votes"]));
+            }
+        }
+        return $allVotes;
+    }
+
     public function queryVoteChoice(array $params): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO `choices` (`app_id`, `startTime`, `username`, `comment`) 

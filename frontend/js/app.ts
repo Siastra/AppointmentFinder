@@ -1,10 +1,11 @@
 let timeslots:string[] = [];
 let amountTimeslots:number;
+let sections:string[] = ['dashboard', 'newAppoint', 'details'];
 
 $(function () {
     loadData();
 
-    $("#insertAppointment").submit(function (event) {
+    $("#insertAppointment").on("submit", function (event) {
         if (timeslots.length > 0) {
             let formData = {
                 title: $("#title").val(),
@@ -36,7 +37,7 @@ $(function () {
     });
 
 
-    $("#voteSlots").submit(function (event) {
+    $("#voteSlots").on("submit", function (event) {
         let checkbox;
 
         for(let i=0;i<amountTimeslots;i++) {
@@ -71,7 +72,7 @@ $(function () {
         }
     });
 
-    $("#timeslotForm").submit(function (event) {
+    $("#timeslotForm").on("submit", function (event) {
         let timeslot: string = $("#timeslot").val() + "";
         timeslots.push(timeslot);
         timeslot.substr(0, timeslot.indexOf("T"));
@@ -81,8 +82,6 @@ $(function () {
     });
 
 });
-
-let sections:string[] = ['dashboard', 'newAppoint', 'details'];
 
 function switchSec(_section:string) {
     for (const i in sections) {
@@ -250,8 +249,6 @@ function detailAppoint(appoint: string, id: number) {
         document.getElementById("Timeslots").appendChild(timeslots);
         // @ts-ignore
         document.getElementById("Timeslots").appendChild(voteButton);
-
-
     }
     fillCommentSection(id);
 
