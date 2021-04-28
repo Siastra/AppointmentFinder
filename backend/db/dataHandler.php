@@ -31,7 +31,9 @@ class DataHandler
     public function getComments(array $params):array{
         return $this->db->getCommentsbyId($params);
     }
-
+    public function getTimeslots(array $params):array{
+        return $this->db->getTimeslots($params);
+    }
     private static function getDemoData(): array
     {
         return [

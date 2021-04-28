@@ -122,18 +122,31 @@ class DB
 
     public function getCommentsbyId(array $params): array{
         $allComments = array();
-        $stmt = $this->conn->prepare('SELECT comment FROM choices WHERE app_id = ?;');
+        $commentUsername = array();
+        $stmt = $this->conn->prepare('SELECT DISTINCT comment,username FROM choices WHERE app_id = ?;');
         $stmt->execute([$params["appointmentId"]]);
         if($stmt->rowCount()>0){
             $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($comments as $comment) {
                 if($comment["comment"]!==""){
-                    array_push($allComments, $comment["comment"]);
+                    array_push($commentUsername,$comment["comment"],$comment["username"]);
+                    array_push($allComments, $commentUsername);
+                    $commentUsername = array();
 
                 }
+
             }
         }
+        else{
+                    array_push($allComments,"EMPTY-NO Comments");
+        }
         return $allComments;
+    }
+    public function getTimeslots(array $params): array{
+        $stmt = $this->conn->prepare('SELECT count(distinct startTime) as "Anz" FROM `timeslots` WHERE app_id = ?');
+        $stmt->execute([$params["appointId"]]);
+        $id = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $id;
     }
     public function queryVoteChoice(array $params): bool
     {

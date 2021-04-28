@@ -27,6 +27,9 @@ class SimpleLogic
             case "getComment":
                 $res = $this->dh->getComments($param);
                 break;
+            case "getTimeslots":
+                $res =  $this->dh->getTimeslots($param);
+                break;
             default:
                 $res = [];
                 break;
