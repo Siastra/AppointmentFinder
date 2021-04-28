@@ -1,5 +1,6 @@
-let timeslots: string[] = [];
-let sections: string[] = ['dashboard', 'newAppoint', 'details'];
+let timeslots:string[] = [];
+let amountTimeslots:number;
+let sections:string[] = ['dashboard', 'newAppoint', 'details'];
 
 $(function () {
     loadData();
@@ -38,8 +39,9 @@ $(function () {
 
     $("#voteSlots").on("submit", function (event) {
         let checkbox;
-        for (let i = 0; i < 3; i++) {
-            checkbox = document.getElementById("voted" + i);
+
+        for(let i=0;i<amountTimeslots;i++) {
+             checkbox =document.getElementById("voted"+i);
             // @ts-ignore
             if (checkbox.checked) {
                 let votedTimeslots = {
@@ -57,13 +59,14 @@ $(function () {
                     data: {method: "queryVoteChoice", param: votedTimeslots},
                     dataType: "json",
                     success: function (response) {
-                        console.log(response);
+                        console.log("Success");
                     },
 
                     error: function (request, status, error) {
                         console.log(request.responseText);
                     }
                 });
+                clearDetail();
                 event.preventDefault();
             }
         }
@@ -89,6 +92,18 @@ function switchSec(_section: string) {
         }
     }
 }
+function clearDetail(){
+    $("#name").val("");
+    $("#comment").val("");
+    let checkbox;
+    for(let i=0;i<amountTimeslots;i++) {
+        checkbox = document.getElementById("voted" + i);
+        // @ts-ignore
+        if(checkbox.checked) {
+            $( '#voted'+i ).prop( "checked", false );
+        }
+        }
+    }
 
 function clearForm() {
     $("#title").val("");
@@ -198,8 +213,11 @@ function fillCommentSection(id: number) {
         data: {method: "getComment", param: appointmentId},
         dataType: "json",
         success: function (comments) {
-            console.log(comments);
-            allComments = comments;
+            if(comments[0]==="EMPTY-NO Comments"){
+                console.log("Keine Kommentare vorhanden")
+            }else{
+                allComments=comments;
+            }
         },
         error: function (request, status, error) {
             console.log(request.responseText);
@@ -209,7 +227,25 @@ function fillCommentSection(id: number) {
 }
 
 function detailAppoint(appoint: string, id: number) {
-    console.log(id);
+    let appointId = {
+        // @ts-ignore
+        appointId: id,
+    }
+    $.ajax({
+        'async': false,
+        type: "GET",
+        url: "../backend/serviceHandler.php",
+        cache: false,
+        data: {method: "getTimeslots", param: appointId},
+        dataType: "json",
+        success: function (amount) {
+                amountTimeslots=amount["Anz"];
+        },
+
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
     for (let i = 0; i < appoint.length; i++) {
         let timeslots = document.createElement("div");
         timeslots.setAttribute(("start" + [i]), "" + appoint[i]);
@@ -220,12 +256,14 @@ function detailAppoint(appoint: string, id: number) {
         let voteButton = document.createElement("input");
         voteButton.type = "checkbox";
         voteButton.id = "voted" + i;
-        fillCommentSection(id);
         // @ts-ignore
         document.getElementById("Timeslots").appendChild(timeslots);
         // @ts-ignore
         document.getElementById("Timeslots").appendChild(voteButton);
     }
+    fillCommentSection(id);
+
+
 }
 
 
