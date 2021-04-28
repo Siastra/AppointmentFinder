@@ -218,6 +218,7 @@ function fillCommentSection(id: number) {
         success: function (comments) {
             if (comments[0] === "EMPTY-NO Comments") {
                 console.log("Keine Kommentare vorhanden")
+                allComments=comments[0];
             } else {
                 allComments = comments;
             }
@@ -230,6 +231,12 @@ function fillCommentSection(id: number) {
     // @ts-ignore
     commentSection.innerHTML="";
     // @ts-ignore
+    if(allComments[0]=="E"){
+
+    }else{
+
+
+    // @ts-ignore
     for (let i = 0; i <allComments.length ; i++) {
             let comment = document.createElement("p");
         // @ts-ignore
@@ -238,8 +245,28 @@ function fillCommentSection(id: number) {
         // @ts-ignore
         commentSection.appendChild(comment);
     }
+    }
 }
+function fillVotesSection(id:number){
+    let appointmentId = {
+        appointmentId: id
+    };
+    $.ajax({
+        'async': false,
 
+        type: "GET",
+        url: "../backend/serviceHandler.php",
+        cache: false,
+        data: {method: "getVotesById", param: appointmentId},
+        dataType: "json",
+        success: function (votes) {
+            console.log(votes);
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+}
 function detailAppoint(appoint: string, id: number) {
     let appointId = {
         // @ts-ignore
@@ -276,6 +303,7 @@ function detailAppoint(appoint: string, id: number) {
         document.getElementById("Timeslots").appendChild(voteButton);
     }
     fillCommentSection(id);
+    fillVotesSection(id);
 
 
 }
