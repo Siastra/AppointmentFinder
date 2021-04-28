@@ -217,6 +217,7 @@ function fillCommentSection(id: number) {
                 console.log("Keine Kommentare vorhanden")
             }else{
                 allComments=comments;
+                console.log(allComments);
             }
         },
         error: function (request, status, error) {
@@ -224,6 +225,15 @@ function fillCommentSection(id: number) {
         }
     });
     let commentSection = document.getElementById("commentSection");
+    // @ts-ignore
+    for (let i = 0; i <allComments.length ; i++) {
+            let comment = document.createElement("p");
+        // @ts-ignore
+        var textToAdd = document.createTextNode(allComments[i][1]+":"+allComments[i][0]);
+        comment.appendChild(textToAdd);
+        // @ts-ignore
+        commentSection.appendChild(comment);
+    }
 }
 
 function detailAppoint(appoint: string, id: number) {
