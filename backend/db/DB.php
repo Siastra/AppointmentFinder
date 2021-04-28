@@ -161,6 +161,8 @@ class DB
             foreach ($timeslots as $timeslot) {
                 array_push($allVotes, array("startTime" => $timeslot["startTime"], "votes" => $timeslot["votes"]));
             }
+        }else{
+            array_push($allVotes,"No-Votes");
         }
         return $allVotes;
     }
