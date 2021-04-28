@@ -1,6 +1,6 @@
-let timeslots:string[] = [];
-let amountTimeslots:number;
-let sections:string[] = ['dashboard', 'newAppoint', 'details'];
+let timeslots: string[] = [];
+let amountTimeslots: number;
+let sections: string[] = ['dashboard', 'newAppoint', 'details'];
 
 $(function () {
     loadData();
@@ -40,8 +40,8 @@ $(function () {
     $("#voteSlots").on("submit", function (event) {
         let checkbox;
 
-        for(let i=0;i<amountTimeslots;i++) {
-             checkbox =document.getElementById("voted"+i);
+        for (let i = 0; i < amountTimeslots; i++) {
+            checkbox = document.getElementById("voted" + i);
             // @ts-ignore
             if (checkbox.checked) {
                 let votedTimeslots = {
@@ -74,10 +74,12 @@ $(function () {
 
     $("#timeslotForm").on("submit", function (event) {
         let timeslot: string = $("#timeslot").val() + "";
-        timeslots.push(timeslot);
-        timeslot.substr(0, timeslot.indexOf("T"));
-        $("#timeslotTable").append("<tr><td>" + timeslot.substr(0, timeslot.indexOf("T")) + "</td>" +
-            "<td>" + timeslot.substr(timeslot.indexOf("T") + 1) + "</td></tr>");
+        if (!timeslots.includes(timeslot)) {
+            timeslots.push(timeslot);
+            timeslot.substr(0, timeslot.indexOf("T"));
+            $("#timeslotTable").append("<tr><td>" + timeslot.substr(0, timeslot.indexOf("T")) + "</td>" +
+                "<td>" + timeslot.substr(timeslot.indexOf("T") + 1) + "</td></tr>");
+        }
         event.preventDefault();
     });
 
@@ -92,18 +94,19 @@ function switchSec(_section: string) {
         }
     }
 }
-function clearDetail(){
+
+function clearDetail() {
     $("#name").val("");
     $("#comment").val("");
     let checkbox;
-    for(let i=0;i<amountTimeslots;i++) {
+    for (let i = 0; i < amountTimeslots; i++) {
         checkbox = document.getElementById("voted" + i);
         // @ts-ignore
-        if(checkbox.checked) {
-            $( '#voted'+i ).prop( "checked", false );
-        }
+        if (checkbox.checked) {
+            $('#voted' + i).prop("checked", false);
         }
     }
+}
 
 function clearForm() {
     $("#title").val("");
@@ -178,19 +181,19 @@ function dashboard(response: Array<string>) {
 
         }
         let details = response[i];
-        newAppoint.innerHTML += "<h1>" + details[0] + "</h1>" +
+        newAppoint.innerHTML += "<div class='row' style='background-color: lightblue;'><h1 class='col-auto'>" + details[0] + "</h1></div>" +
             "<div class='row'><label class='col-4'>Info:</label><span class='col-8'>" + details[1] + "</span></div>" +
             "<div class='row'><label class='col-4'>Location:</label><span class='col-8'>" + details[2] + "</span></div>" +
             "<div class='row'><label class='col-4'>Duration:</label><span class='col-8'>" + details[3] + " min</span></div>" +
             "<div class='row'><label class='col-4'>Vote open until:</label><span class='col-8'>" + details[4] + "</span></div>";
-            let timeslots = "<div class='row'><label class='col-4'>Timeslots:</label><span class='col-8'>";
+        let timeslots = "<div class='row'><label class='col-4'>Timeslots:</label><span class='col-8'>";
         for (let j = 0; j < details[5].length; j++) {
             timeslots += "<label class='times'>" + details[5][j] + "</label>";
         }
         timeslots += "</span>";
         newAppoint.innerHTML += timeslots;
-        newAppoint.innerHTML += "<div class='row'><div class='col-10 col-offset'></div><div class='col-2' id='btnDiv" +
-        i + "'></div>";
+        newAppoint.innerHTML += "<div class='row'><div class='col-4' id='btnDiv" +
+            i + "'></div><div class='col-8 col-offset'></div>";
         // @ts-ignore
         document.getElementById("appointments").appendChild(newAppoint);
         // @ts-ignore
@@ -213,10 +216,10 @@ function fillCommentSection(id: number) {
         data: {method: "getComment", param: appointmentId},
         dataType: "json",
         success: function (comments) {
-            if(comments[0]==="EMPTY-NO Comments"){
+            if (comments[0] === "EMPTY-NO Comments") {
                 console.log("Keine Kommentare vorhanden")
-            }else{
-                allComments=comments;
+            } else {
+                allComments = comments;
             }
         },
         error: function (request, status, error) {
@@ -239,7 +242,7 @@ function detailAppoint(appoint: string, id: number) {
         data: {method: "getTimeslots", param: appointId},
         dataType: "json",
         success: function (amount) {
-                amountTimeslots=amount["Anz"];
+            amountTimeslots = amount["Anz"];
         },
 
         error: function (request, status, error) {

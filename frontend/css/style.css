@@ -1,18 +1,21 @@
 #dashboard{
     display: flex;
 }
+
 #details{
     display: none;
     width: 100%;
 }
+
 .formate{
     padding: 2%;
 }
+
 #newAppoint{
     display:none;
 }
 
-.appointment>h1{
+.heading{
     background-color: lightblue;
     padding: 2%;
     margin-bottom: 0;
