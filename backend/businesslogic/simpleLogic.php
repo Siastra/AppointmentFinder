@@ -30,6 +30,9 @@ class SimpleLogic
             case "getTimeslots":
                 $res =  $this->dh->getTimeslots($param);
                 break;
+            case "getVotesById":
+                $res = $this->dh->getVotesById($param);
+                break;
             default:
                 $res = [];
                 break;
