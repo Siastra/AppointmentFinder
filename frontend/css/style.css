@@ -11,3 +11,24 @@
 #newAppoint{
     display:none;
 }
+
+.appointment>h1{
+    background-color: lightblue;
+    padding: 2%;
+    margin-bottom: 0;
+}
+
+.appointment{
+    margin-bottom: 5%;
+}
+
+.appointment>div:last-child{
+    background-color: lightblue;
+}
+
+.times{
+    background-color: aquamarine;
+    padding: 2%;
+    margin: 2%;
+    border-radius: 25px;
+}

@@ -95,7 +95,7 @@ class DB
 
     public function get_AppId(array $param): array
     {
-        $stmt = $this->conn->prepare('SELECT id  FROM appointments WHERE title = ?' );
+        $stmt = $this->conn->prepare('SELECT id FROM appointments WHERE title = ?' );
         $stmt->execute([$param["title"]]);
         $id = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $id[0];
@@ -104,7 +104,7 @@ class DB
     public function getAllTimeslotsById(int $id) : array
     {
         $timeslots = array();
-        $stmt = $this->conn->prepare('SELECT app_id, startTime FROM timeslots WHERE app_id = ?;');
+        $stmt = $this->conn->prepare('SELECT startTime FROM timeslots WHERE app_id = ?;');
         $stmt->execute([$id]);
         if ($stmt->rowCount() > 0) {
             // output data of each row
@@ -122,7 +122,9 @@ class DB
 
     public function getCommentsbyId(array $params): array{
         $allComments = array();
-        $stmt = $this->conn->prepare('SELECT comment FROM choices WHERE app_id = ?;');
+        $stmt = $this->conn->prepare('SELECT comment 
+                                              FROM choices 
+                                             WHERE app_id = ?;');
         $stmt->execute([$params["appointmentId"]]);
         if($stmt->rowCount()>0){
             $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -1,5 +1,5 @@
-let timeslots:string[] = [];
-let sections:string[] = ['dashboard', 'newAppoint', 'details'];
+let timeslots: string[] = [];
+let sections: string[] = ['dashboard', 'newAppoint', 'details'];
 
 $(function () {
     loadData();
@@ -28,7 +28,7 @@ $(function () {
                 }
             });
             clearForm();
-        }else {
+        } else {
             alert("No timeslots added!");
         }
 
@@ -38,15 +38,15 @@ $(function () {
 
     $("#voteSlots").on("submit", function (event) {
         let checkbox;
-        for(let i=0;i<3;i++) {
-             checkbox =document.getElementById("voted"+i);
+        for (let i = 0; i < 3; i++) {
+            checkbox = document.getElementById("voted" + i);
             // @ts-ignore
-            if(checkbox.checked){
+            if (checkbox.checked) {
                 let votedTimeslots = {
                     // @ts-ignore
-                   appointId: document.getElementById("slot"+i).getAttribute("appointid"),
+                    appointId: document.getElementById("slot" + i).getAttribute("appointid"),
                     // @ts-ignore
-                    time: document.getElementById("slot"+i).getAttribute("start"+i),
+                    time: document.getElementById("slot" + i).getAttribute("start" + i),
                     username: $("#name").val(),
                     comment: $("#comment").val()
                 };
@@ -80,11 +80,11 @@ $(function () {
 
 });
 
-function switchSec(_section:string) {
+function switchSec(_section: string) {
     for (const i in sections) {
         if (sections[i] == _section) {
             $('#' + _section).show();
-        }else {
+        } else {
             $('#' + sections[i]).hide();
         }
     }
@@ -121,6 +121,7 @@ function dashboard(response: Array<string>) {
     let id: number;
     for (let i = 0; i < response.length; i++) {
         let newAppoint = document.createElement("div");
+        newAppoint.className = "appointment";
         let detailButton = document.createElement("button");
         detailButton.className = "details";
         detailButton.id = "detail";
@@ -128,17 +129,18 @@ function dashboard(response: Array<string>) {
         let appointId: number = parseInt(<string>detailButton.getAttribute("number"));
         appointId++;
         detailButton.textContent = "Details";
+        detailButton.className = "btn btn-success";
         detailButton.onclick = function () {
             // @ts-ignore
             document.getElementById("Timeslots").innerHTML = "";
-            var x = document.getElementById("dashboard");
-            var y = document.getElementById("details");
+            let x = document.getElementById("dashboard");
+            let y = document.getElementById("details");
             // @ts-ignore
             x.style.display = "none";
             // @ts-ignore
             y.style.display = "flex";
             let title = {
-               title:(response[i])[0]
+                title: (response[i])[0]
             };
             $.ajax({
                 'async': false,
@@ -146,37 +148,45 @@ function dashboard(response: Array<string>) {
                 type: "GET",
                 url: "../backend/serviceHandler.php",
                 cache: false,
-                data: {method: "getId",param: title},
+                data: {method: "getId", param: title},
                 dataType: "json",
-                success: function (responsee) {
-                            id=responsee["id"];
-                            console.log("userId");
+                success: function (response) {
+                    id = response["id"];
                 },
                 error: function (request, status, error) {
                     console.log(request.responseText);
                 }
             });
-            console.log(id);
             // @ts-ignore
-            let resp:string=(response[this.getAttribute("number")]);
-            detailAppoint(resp[4], id);
+            let resp: string = (response[this.getAttribute("number")]);
+            detailAppoint(resp[5], id);
 
         }
         let details = response[i];
-        for (let y = 0; y < response[i].length; y++) {
-            newAppoint.innerHTML = newAppoint.innerHTML + "<br>" + details[y];
+        newAppoint.innerHTML += "<h1>" + details[0] + "</h1>" +
+            "<div class='row'><label class='col-4'>Info:</label><span class='col-8'>" + details[1] + "</span></div>" +
+            "<div class='row'><label class='col-4'>Location:</label><span class='col-8'>" + details[2] + "</span></div>" +
+            "<div class='row'><label class='col-4'>Duration:</label><span class='col-8'>" + details[3] + " min</span></div>" +
+            "<div class='row'><label class='col-4'>Vote open until:</label><span class='col-8'>" + details[4] + "</span></div>";
+            let timeslots = "<div class='row'><label class='col-4'>Timeslots:</label><span class='col-8'>";
+        for (let j = 0; j < details[5].length; j++) {
+            timeslots += "<label class='times'>" + details[5][j] + "</label>";
         }
+        timeslots += "</span>";
+        newAppoint.innerHTML += timeslots;
+        newAppoint.innerHTML += "<div class='row'><div class='col-10 col-offset'></div><div class='col-2' id='btnDiv" +
+        i + "'></div>";
         // @ts-ignore
         document.getElementById("appointments").appendChild(newAppoint);
         // @ts-ignore
-        document.getElementById("appointments").appendChild(detailButton);
+        document.getElementById("btnDiv" + i).appendChild(detailButton);
 
     }
 }
 
-function fillCommentSection(id: number){
-    let allComments:Array<string>;
-    let  appointmentId= {
+function fillCommentSection(id: number) {
+    let allComments: string[];
+    let appointmentId = {
         appointmentId: id
     };
     $.ajax({
@@ -185,25 +195,26 @@ function fillCommentSection(id: number){
         type: "GET",
         url: "../backend/serviceHandler.php",
         cache: false,
-        data: {method: "getComment",param: appointmentId},
+        data: {method: "getComment", param: appointmentId},
         dataType: "json",
         success: function (comments) {
             console.log(comments);
-            allComments=comments;
+            allComments = comments;
         },
         error: function (request, status, error) {
             console.log(request.responseText);
         }
     });
-    let commentSection=document.getElementById("commentSection");
+    let commentSection = document.getElementById("commentSection");
 }
+
 function detailAppoint(appoint: string, id: number) {
     console.log(id);
     for (let i = 0; i < appoint.length; i++) {
         let timeslots = document.createElement("div");
-        timeslots.setAttribute(("start"+[i]), "" + appoint[i]);
-        timeslots.setAttribute(("appointid"), ""+id );
-        timeslots.id="slot"+i;
+        timeslots.setAttribute(("start" + [i]), "" + appoint[i]);
+        timeslots.setAttribute(("appointid"), "" + id);
+        timeslots.id = "slot" + i;
         timeslots.className = "timeslots";
         timeslots.innerHTML = ("" + appoint[i] + "<br>");
         let voteButton = document.createElement("input");
