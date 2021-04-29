@@ -22,7 +22,7 @@ $(function () {
                 data: {method: "queryInsertAppointment", param: formData},
                 dataType: "json",
                 success: function (response) {
-                    console.log(response);
+                    loadData();
                 },
                 error: function (request, status, error) {
                     console.log(request.responseText);
@@ -119,6 +119,7 @@ function clearForm() {
 }
 
 function loadData() {
+    $("#appointments").html("");
     $.ajax({
         type: "GET",
         url: "../backend/serviceHandler.php",
@@ -181,11 +182,13 @@ function dashboard(response: Array<string>) {
 
         }
         let details = response[i];
+        let exp_date:Date = new Date(details[4]);
         newAppoint.innerHTML += "<div class='row' style='background-color: lightblue;'><h1 class='col-auto'>" + details[0] + "</h1></div>" +
             "<div class='row'><label class='col-4'>Info:</label><span class='col-8'>" + details[1] + "</span></div>" +
             "<div class='row'><label class='col-4'>Location:</label><span class='col-8'>" + details[2] + "</span></div>" +
             "<div class='row'><label class='col-4'>Duration:</label><span class='col-8'>" + details[3] + " min</span></div>" +
-            "<div class='row'><label class='col-4'>Vote open until:</label><span class='col-8'>" + details[4] + "</span></div>";
+            "<div class='row'><label class='col-4'>Vote open until:</label><span class='col-8'>" +
+            ((exp_date > new Date()) ? details[4]: "Closed") + "</span></div>";
         let timeslots = "<div class='row'><label class='col-4'>Timeslots:</label><span class='col-8'>";
         for (let j = 0; j < details[5].length; j++) {
             timeslots += "<label class='times'>" + details[5][j] + "</label>";

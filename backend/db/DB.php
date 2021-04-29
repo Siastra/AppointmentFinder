@@ -70,6 +70,7 @@ class DB
                 return 0;
             }
         }
+        return 0;
     }
 
     public function getAllAppointments() : array
