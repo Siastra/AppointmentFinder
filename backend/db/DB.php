@@ -56,7 +56,7 @@ class DB
         return true;
     }
 
-    public function getLastAppointmentId() : int
+    public function getLastAppointmentId(): int
     {
         $stmt = $this->conn->prepare('SELECT max(id) as "lastId" FROM appointments;');
         $stmt->execute();
@@ -73,7 +73,7 @@ class DB
         return 0;
     }
 
-    public function getAllAppointments() : array
+    public function getAllAppointments(): array
     {
         $res = array();
         $stmt = $this->conn->prepare('SELECT id, title, location, info, duration, expiration_date FROM appointments;');
@@ -90,19 +90,21 @@ class DB
             } catch (Exception $e) {
                 echo 'Exception abgefangen: ', $e->getMessage(), "\n";
             }
+        } else {
+            $res[0] = "No Entries";
         }
         return $res;
     }
 
     public function get_AppId(array $param): array
     {
-        $stmt = $this->conn->prepare('SELECT id FROM appointments WHERE title = ?' );
+        $stmt = $this->conn->prepare('SELECT id FROM appointments WHERE title = ?');
         $stmt->execute([$param["title"]]);
         $id = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $id[0];
     }
 
-    public function getAllTimeslotsById(int $id) : array
+    public function getAllTimeslotsById(int $id): array
     {
         $timeslots = array();
         $stmt = $this->conn->prepare('SELECT startTime FROM timeslots WHERE app_id = ?;');
@@ -121,62 +123,83 @@ class DB
         return $timeslots;
     }
 
-    public function getCommentsbyId(array $params): array{
+    public function getCommentsbyId(array $params): array
+    {
         $allComments = array();
         $commentUsername = array();
         $stmt = $this->conn->prepare('SELECT DISTINCT comment,username FROM choices WHERE app_id = ?;');
         $stmt->execute([$params["appointmentId"]]);
-        if($stmt->rowCount()>0){
+        if ($stmt->rowCount() > 0) {
             $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($comments as $comment) {
-                if($comment["comment"]!==""){
-                    array_push($commentUsername,$comment["comment"],$comment["username"]);
+                if ($comment["comment"] !== "") {
+                    array_push($commentUsername, $comment["comment"], $comment["username"]);
                     array_push($allComments, $commentUsername);
                     $commentUsername = array();
 
                 }
 
             }
-        }
-        else{
-                    array_push($allComments,"EMPTY-NO Comments");
+        } else {
+            array_push($allComments, "EMPTY-NO Comments");
         }
         return $allComments;
     }
-    public function getTimeslots(array $params): array{
+
+    public function getTimeslots(array $params): array
+    {
         $stmt = $this->conn->prepare('SELECT count(distinct startTime) as "Anz" FROM `timeslots` WHERE app_id = ?');
         $stmt->execute([$params["appointId"]]);
         $id = $stmt->fetch(PDO::FETCH_ASSOC);
         return $id;
     }
 
-    public function getVotesById(array $params): array{
+    public function getVotesById(array $params): array
+    {
         $allVotes = array();
         $stmt = $this->conn->prepare('SELECT startTime, count(*) as "votes" 
                                               FROM `choices` 
                                              WHERE app_id = ? 
                                              GROUP BY startTime;');
         $stmt->execute([$params["appointmentId"]]);
-        if($stmt->rowCount()>0){
+        if ($stmt->rowCount() > 0) {
             $timeslots = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($timeslots as $timeslot) {
                 array_push($allVotes, array("startTime" => $timeslot["startTime"], "votes" => $timeslot["votes"]));
             }
-        }else{
-            array_push($allVotes,"No-Votes");
+        } else {
+            array_push($allVotes, "No-Votes");
         }
         return $allVotes;
     }
 
-    public function queryVoteChoice(array $params): bool
+    public function deleteAppoint($params): array
+    {
+        $dummyArray = array();
+        $stmt = $this->conn->prepare('SELECT id FROM appointments WHERE title = ?');
+        $stmt->execute([$params["title"]]);
+        $id = $stmt->fetch();
+        var_dump($id["id"]);
+        $stmt = $this->conn->prepare('DELETE  FROM choices WHERE app_id = ?');
+        $stmt->execute([$id["id"]]);
+        $stmt = $this->conn->prepare('DELETE  FROM timeslots WHERE app_id = ?');
+        $stmt->execute([$id["id"]]);
+        $stmt = $this->conn->prepare('DELETE  FROM appointments WHERE id = ?');
+        $stmt->execute([$id["id"]]);
+        return $dummyArray;
+
+
+    }
+
+    public function queryVoteChoice(array $params): array
     {
         $stmt = $this->conn->prepare("INSERT INTO `choices` (`app_id`, `startTime`, `username`, `comment`) 
                                                  VALUES (?, ?, ?, ?);");
         try {
             $stmt->execute([$params["appointId"], $params["time"], $params["username"], $params["comment"]]);
-            return true;
+            return array(true);
         } catch (PDOException $e) {
-            return false;
+            return array(false);
         }
     }
 }

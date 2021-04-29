@@ -39,7 +39,6 @@ $(function () {
 
     $("#voteSlots").on("submit", function (event) {
         let checkbox;
-
         for (let i = 0; i < amountTimeslots; i++) {
             checkbox = document.getElementById("voted" + i);
             // @ts-ignore
@@ -59,17 +58,20 @@ $(function () {
                     data: {method: "queryVoteChoice", param: votedTimeslots},
                     dataType: "json",
                     success: function (response) {
-                        console.log("Success");
+                        fillCommentSection(Number(votedTimeslots["appointId"]));
+                        fillVotesSection(Number(votedTimeslots["appointId"]));
                     },
 
                     error: function (request, status, error) {
                         console.log(request.responseText);
                     }
                 });
-                clearDetail();
                 event.preventDefault();
             }
         }
+        clearDetail();
+
+
     });
 
     $("#timeslotForm").on("submit", function (event) {
@@ -127,7 +129,11 @@ function loadData() {
         data: {method: "queryAppointments"},
         dataType: "json",
         success: function (response) {
-            dashboard(response);
+            if (response[0] == "No Entries") {
+                $('#appointments').html("No Entries");
+            } else {
+                dashboard(response);
+            }
 
         },
         error: function (request, status, error) {
@@ -141,6 +147,13 @@ function dashboard(response: Array<string>) {
     for (let i = 0; i < response.length; i++) {
         let newAppoint = document.createElement("div");
         newAppoint.className = "appointment";
+        let deleteButton = document.createElement("button");
+        deleteButton.id = "delete";
+        deleteButton.className = "btn btn-danger";
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = function () {
+            deleteAppointment(response[i][0])
+        };
         let detailButton = document.createElement("button");
         detailButton.className = "details";
         detailButton.id = "detail";
@@ -178,17 +191,17 @@ function dashboard(response: Array<string>) {
             });
             // @ts-ignore
             let resp: string = (response[this.getAttribute("number")]);
-            detailAppoint(resp[5], id);
+            detailAppoint(resp[5], id, resp[4]);
 
         }
         let details = response[i];
-        let exp_date:Date = new Date(details[4]);
+        let exp_date: Date = new Date(details[4]);
         newAppoint.innerHTML += "<div class='row' style='background-color: lightblue;'><h1 class='col-auto'>" + details[0] + "</h1></div>" +
             "<div class='row'><label class='col-4'>Info:</label><span class='col-8'>" + details[1] + "</span></div>" +
             "<div class='row'><label class='col-4'>Location:</label><span class='col-8'>" + details[2] + "</span></div>" +
             "<div class='row'><label class='col-4'>Duration:</label><span class='col-8'>" + details[3] + " min</span></div>" +
             "<div class='row'><label class='col-4'>Vote open until:</label><span class='col-8'>" +
-            ((exp_date > new Date()) ? details[4]: "Closed") + "</span></div>";
+            ((exp_date > new Date()) ? details[4] : "Closed") + "</span></div>";
         let timeslots = "<div class='row'><label class='col-4'>Timeslots:</label><span class='col-8'>";
         for (let j = 0; j < details[5].length; j++) {
             timeslots += "<label class='times'>" + details[5][j] + "</label>";
@@ -201,8 +214,32 @@ function dashboard(response: Array<string>) {
         document.getElementById("appointments").appendChild(newAppoint);
         // @ts-ignore
         document.getElementById("btnDiv" + i).appendChild(detailButton);
+        // @ts-ignore
+        document.getElementById("btnDiv" + i).appendChild(deleteButton);
+
 
     }
+}
+
+function deleteAppointment(appointTitle: string) {
+    let title = {
+        title: appointTitle
+    };
+    $.ajax({
+
+        type: "GET",
+        url: "../backend/serviceHandler.php",
+        cache: false,
+        data: {method: "deleteAppoint", param: title},
+        dataType: "json",
+        success: function (response) {
+
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    })
+    loadData();
 }
 
 function fillCommentSection(id: number) {
@@ -220,8 +257,7 @@ function fillCommentSection(id: number) {
         dataType: "json",
         success: function (comments) {
             if (comments[0] === "EMPTY-NO Comments") {
-                console.log("Keine Kommentare vorhanden")
-                allComments=comments[0];
+                allComments = comments[0];
             } else {
                 allComments = comments;
             }
@@ -232,26 +268,27 @@ function fillCommentSection(id: number) {
     });
     let commentSection = document.getElementById("commentSection");
     // @ts-ignore
-    commentSection.innerHTML="";
+    commentSection.innerHTML = "";
     // @ts-ignore
-    if(allComments[0]=="E"){
+    if (allComments[0] == "E") {
 
-    }else{
+    } else {
 
 
-    // @ts-ignore
-    for (let i = 0; i <allComments.length ; i++) {
+        // @ts-ignore
+        for (let i = 0; i < allComments.length; i++) {
             let comment = document.createElement("p");
-        // @ts-ignore
-        var textToAdd = document.createTextNode(allComments[i][1]+":"+allComments[i][0]);
-        comment.appendChild(textToAdd);
-        // @ts-ignore
-        commentSection.appendChild(comment);
-    }
+            // @ts-ignore
+            var textToAdd = document.createTextNode(allComments[i][1] + ":" + allComments[i][0]);
+            comment.appendChild(textToAdd);
+            // @ts-ignore
+            commentSection.appendChild(comment);
+        }
     }
 }
-function fillVotesSection(id:number){
-    let allVotes:Array<any>;
+
+function fillVotesSection(id: number) {
+    let allVotes: Array<any>;
     let appointmentId = {
         appointmentId: id
     };
@@ -265,7 +302,7 @@ function fillVotesSection(id:number){
         success: function (votes) {
 
 
-                allVotes=votes;
+            allVotes = votes;
 
 
         },
@@ -275,57 +312,66 @@ function fillVotesSection(id:number){
     });
     let voteSection = document.getElementById("voteSection");
     // @ts-ignore
-    voteSection.innerHTML="";
+    voteSection.innerHTML = "";
     // @ts-ignore
-    if(allVotes[0]=="No-Votes"){
+    if (allVotes[0] == "No-Votes") {
 
-    }else{
+    } else {
 
-    // @ts-ignore
+        // @ts-ignore
         for (let i = 0; i < allVotes.length; i++) {
-        let vote = document.createElement("p");
-        // @ts-ignore
-        var voteToAdd = document.createTextNode("For the start Time:"+allVotes[i]["startTime"]+" are "+allVotes[i]["votes"]+" votes!");
-        vote.appendChild(voteToAdd);
-        // @ts-ignore
-        voteSection.appendChild(vote);
-    }}
-}
-function detailAppoint(appoint: string, id: number) {
-    let appointId = {
-        // @ts-ignore
-        appointId: id,
-    }
-    $.ajax({
-        'async': false,
-        type: "GET",
-        url: "../backend/serviceHandler.php",
-        cache: false,
-        data: {method: "getTimeslots", param: appointId},
-        dataType: "json",
-        success: function (amount) {
-            amountTimeslots = amount["Anz"];
-        },
-
-        error: function (request, status, error) {
-            console.log(request.responseText);
+            let vote = document.createElement("p");
+            // @ts-ignore
+            var voteToAdd = document.createTextNode("For the start Time:" + allVotes[i]["startTime"] + " are " + allVotes[i]["votes"] + " votes!");
+            vote.appendChild(voteToAdd);
+            // @ts-ignore
+            voteSection.appendChild(vote);
         }
-    });
-    for (let i = 0; i < appoint.length; i++) {
-        let timeslots = document.createElement("div");
-        timeslots.setAttribute(("start" + [i]), "" + appoint[i]);
-        timeslots.setAttribute(("appointid"), "" + id);
-        timeslots.id = "slot" + i;
-        timeslots.className = "timeslots";
-        timeslots.innerHTML = ("" + appoint[i] + "<br>");
-        let voteButton = document.createElement("input");
-        voteButton.type = "checkbox";
-        voteButton.id = "voted" + i;
-        // @ts-ignore
-        document.getElementById("Timeslots").appendChild(timeslots);
-        // @ts-ignore
-        document.getElementById("Timeslots").appendChild(voteButton);
     }
+}
+
+function detailAppoint(appoint: string, id: number, datetime: string) {
+    let cancelDate: Date = new Date(datetime);
+    if (new Date() < cancelDate) {
+        $('#user').show();
+        let appointId = {
+            // @ts-ignore
+            appointId: id,
+        }
+        $.ajax({
+            'async': false,
+            type: "GET",
+            url: "../backend/serviceHandler.php",
+            cache: false,
+            data: {method: "getTimeslots", param: appointId},
+            dataType: "json",
+            success: function (amount) {
+                amountTimeslots = amount["Anz"];
+            },
+
+            error: function (request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+        for (let i = 0; i < appoint.length; i++) {
+            let timeslots = document.createElement("div");
+            timeslots.setAttribute(("start" + [i]), "" + appoint[i]);
+            timeslots.setAttribute(("appointid"), "" + id);
+            timeslots.id = "slot" + i;
+            timeslots.className = "timeslots";
+            timeslots.innerHTML = ("" + appoint[i] + "<br>");
+            let voteButton = document.createElement("input");
+            voteButton.type = "checkbox";
+            voteButton.id = "voted" + i;
+            // @ts-ignore
+            document.getElementById("Timeslots").appendChild(timeslots);
+            // @ts-ignore
+            document.getElementById("Timeslots").appendChild(voteButton);
+        }
+    } else {
+        $('#user').hide();
+    }
+
     fillCommentSection(id);
     fillVotesSection(id);
 

@@ -4,12 +4,13 @@ include("./db/dataHandler.php");
 class SimpleLogic
 {
     private DataHandler $dh;
+
     function __construct()
     {
         $this->dh = new DataHandler();
     }
 
-    function handleRequest($method,$param): ?array
+    function handleRequest($method, $param): ?array
     {
         switch ($method) {
             case "queryAppointments":
@@ -28,11 +29,15 @@ class SimpleLogic
                 $res = $this->dh->getComments($param);
                 break;
             case "getTimeslots":
-                $res =  $this->dh->getTimeslots($param);
+                $res = $this->dh->getTimeslots($param);
                 break;
             case "getVotesById":
                 $res = $this->dh->getVotesById($param);
                 break;
+            case "deleteAppoint":
+                $res = $this->dh->deleteAppoint($param);
+                break;
+
             default:
                 $res = [];
                 break;

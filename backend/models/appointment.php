@@ -1,6 +1,7 @@
 <?php
 
-class Appointment {
+class Appointment
+{
 
     private string $title, $location, $info, $expiration_date;
     private int $duration;
@@ -120,7 +121,7 @@ class Appointment {
         $this->expiration_date = $expiration_date;
     }
 
-    public function getArray() : array
+    public function getArray(): array
     {
         return array($this->title, $this->info, $this->location, $this->duration, $this->expiration_date, $this->timeslots);
     }
